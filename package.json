@@ -1,0 +1,31 @@
+{
+  "name": "math",
+  "version": "1.0.0",
+  "description": "a library which helps to solve simple mathmatics problems",
+  "main": "main.js",
+  "scripts": {
+    "test": "mocha test"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/cprasenj/MATH.git"
+  },
+  "keywords": [
+    "math",
+    "set",
+    "tree",
+    "statistics",
+    "autometa"
+  ],
+  "author": "Prasenjit Chakraborty",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/cprasenj/MATH/issues"
+  },
+  "homepage": "https://github.com/cprasenj/MATH#readme",
+  "dependencies": {
+    "chai": "^3.5.0",
+    "lodash": "^4.13.1",
+    "mocha": "^2.5.3"
+  }
+}
