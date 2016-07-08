@@ -1,22 +1,22 @@
 var lib = {};
 var _ = require('lodash');
-lib.and = function(first, second) {
+var and = function(first, second) {
   return first && second;
 }
 
-lib.or = function(first, second) {
+var or = function(first, second) {
   return first || second;
 }
 
-lib.not = function(val) {
+var not = function(val) {
   return !val;
 }
 
-lib.allCombinations = function combinations(list) {
+var allCombinations = function combinations(list) {
     var combinator = function(active, rest, bucket) {
-        if (!active.length && !rest.length)
+        if (and(not(active.length), not(rest.length)))
             return [];
-        if (!rest.length) {
+        if (not(rest.length)) {
             bucket.push(_.compact(_.flattenDeep(active)));
         } else {
             combinator([active, _.head(rest)], _.tail(rest), bucket);
@@ -27,4 +27,9 @@ lib.allCombinations = function combinations(list) {
     return combinator("", list, []);
 }
 
-exports.lib = lib;
+exports.lib = {
+  'and'             : and,
+  'or'              : or,
+  'not'             : not,
+  'allCombinations' : allCombinations
+};
