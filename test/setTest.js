@@ -57,8 +57,10 @@ describe("SET", function() {
       var set1 = new Set(1);
       var set3 = new Set(1, 2, 3);
       var set0 = new Set();
+      var set4 = new Set(1, 2, 3, 1, 2, 3);
       assert.equal(set1.cardinality(), 1);
       assert.equal(set3.cardinality(), 3);
+      assert.equal(set4.cardinality(), 3);
       assert.equal(set0.cardinality(), 0);
     });
     it('should give true if the set is empty else gives false', function() {
@@ -94,6 +96,27 @@ describe("SET", function() {
       expect(set4.isIntegerSet()).to.be.false;
       expect(new Set().isIntegerSet()).to.be.true;
     });
+    it('isPositiveSet tells if all the elements in the set are positive or not', function() {
+      var set = new Set(2,3,5);
+      var set1 = new Set(-2,3,5,32416187567);
+      expect(set.isPositiveSet()).to.be.true;
+      expect(set1.isPositiveSet()).to.be.false;
+    });
+    it('isNegativeSet tells if all the elements in the set are positive or not', function() {
+      var set = new Set(-2,-3,-5);
+      var set1 = new Set(2,3,5,32416187567);
+      expect(set.isNegativeSet()).to.be.true;
+      expect(set1.isNegativeSet()).to.be.false;
+    });
+    it('union should give the union of two sets', function() {
+      var set = new Set(1,2);
+      var set1 = new Set(2,3);
+      var set2 = new Set(1,2,3);
+      var set3 = new Set(1,2,2,3);
+      expect((set.union(set2)).equals(set2)).to.be.true;
+      expect((set.union(set2)).equals(set3)).to.be.true;
+    });
+
   });
 
 });

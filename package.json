@@ -15,7 +15,9 @@
     "set",
     "tree",
     "statistics",
-    "autometa"
+    "autometa",
+    "complex number",
+    "complex"
   ],
   "author": "Prasenjit Chakraborty",
   "license": "ISC",

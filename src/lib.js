@@ -32,14 +32,12 @@ var allCombinations = function combinations(list) {
     return combinator("", list, []);
 }
 
-var add = _.curry(_.add);
-var div = _.curry(_.divide);
-var add1 = add(1);
-var add2 = add(2);
-var sub1 = add(-1);
-var divideBy2 = div(2);
-var lessThan = _.curry(_.lt);
-var lt0 = lessThan(0);
+var add1 = _.partial(_.add, 1);
+var add2 = _.partial(_.add, 2);
+var sub1 = _.partialRight(_.subtract, 1);
+var divideBy2 = _.partial(_.divide, 2);
+var gt0 = _.partialRight(_.gt, 0);
+var lt0 = _.partialRight(_.lt, 0);
 
 var successor = function(number) {
   return add1(number);
@@ -66,5 +64,6 @@ exports.lib = {
   'allCombinations' : allCombinations,
   'isPrime'         : isPrime,
   'isInteger'       : isInteger,
-  'gt0'             : lt0
+  'gt0'             : gt0,
+  'lt0'             : lt0
 };

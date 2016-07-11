@@ -2,7 +2,7 @@ var _ = require('lodash');
 var lib = require('./lib.js').lib;
 
 Set = function() {
-  this.elementsSet = lib.or(lib.and(arguments, _.flowRight(_.flatten, _.values)(arguments)), []);
+  this.elementsSet = lib.or(lib.and(arguments, _.flowRight(_.uniq, _.flatten, _.values)(arguments)), []);
 }
 
 Set.prototype = {
@@ -21,10 +21,6 @@ Set.prototype = {
     return thisElements.every((aValue) => _.includes(thatElements, aValue));
   },
 
-  'equals' : function(that) {
-    return lib.and(this.isSubset(that), that.isSubset(this));
-  },
-
   'isProperSubset' : function(that) {
     return _.flowRight(Boolean, lib.and)(this.isSubset(that), lib.not(this.equals(that)));
   },
@@ -36,6 +32,10 @@ Set.prototype = {
 
   'cardinality' : function() {
     return this.elements().length;
+  },
+
+  'equals' : function(that) {
+    return lib.and(this.isSubset(that), that.isSubset(this));
   },
 
   'isEmpty' : function() {
@@ -56,5 +56,17 @@ Set.prototype = {
 
   'isNaturalSet' : function() {
     return this.elements().every((anElement) => _.flowRight(lib.gt0, lib.isInteger)(anElement));
+  },
+
+  'isPositiveSet' : function() {
+    return _.every(this.elements(), lib.gt0);
+  },
+
+  'isNegativeSet' : function() {
+    return _.every(this.elements(), lib.lt0);
+  },
+
+  'union' : function(that) {
+    return new Set(_.union(this.elements(), that.elements()));
   }
 }
