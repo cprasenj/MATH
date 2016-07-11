@@ -1,5 +1,6 @@
 var _ = require('lodash');
 var lib = require('./lib.js').lib;
+
 Set = function() {
   this.elementsSet = lib.or(lib.and(arguments, _.flowRight(_.flatten, _.values)(arguments)), []);
 }
@@ -31,5 +32,29 @@ Set.prototype = {
   'powerSet' : function() {
     var combinations = lib.allCombinations(this.elements());
     return combinations.map((aCombination) => new Set(aCombination));
+  },
+
+  'cardinality' : function() {
+    return this.elements().length;
+  },
+
+  'isEmpty' : function() {
+    return lib.not(this.cardinality());
+  },
+
+  'isUnit' : function() {
+    return _.isEqual(this.cardinality(), 1);
+  },
+
+  'isPrimeSet' : function() {
+    return this.elements().every((anElement) => lib.isPrime(anElement));
+  },
+
+  'isIntegerSet' : function() {
+    return this.elements().every((anElement) => lib.isInteger(anElement));
+  },
+
+  'isNaturalSet' : function() {
+    return this.elements().every((anElement) => _.flowRight(lib.gt0, lib.isInteger)(anElement));
   }
 }
