@@ -13,6 +13,10 @@ var not = function(val) {
   return !val;
 }
 
+var remainder = function(one, another) {
+  return one % another;
+}
+
 var allCombinations = function combinations(list) {
     var combinator = function(active, rest, bucket) {
         if (and(not(active.length), not(rest.length)))
@@ -46,17 +50,9 @@ var predessor = function(number) {
 }
 
 var isPrime = function(number) {
-  var primes = [2];
-  var limit = _.flowRight(add1, divideBy2)(number);
-  for(i = 3; _.lte(i, limit); add2(i)) {
-    var isDivisibleByPrimes = primes.every((aPrime) => not(number % aPrime));
-    if(not(isDivisibleByPrimes)) {
-      primes.push(i);
-    } else {
-      return false;
-    }
-  }
-  return true;
+  var limit = _.flowRight(add1, Math.sqrt)(number);
+  if(_.lte(number, 3)) return true;
+  return _.range(2, limit).every((aValueInRange) => remainder(number, aValueInRange));
 }
 
 var isInteger = function(number) {
@@ -70,5 +66,5 @@ exports.lib = {
   'allCombinations' : allCombinations,
   'isPrime'         : isPrime,
   'isInteger'       : isInteger,
-  'gt0'             : lt0 
+  'gt0'             : lt0
 };

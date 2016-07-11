@@ -76,16 +76,23 @@ describe("SET", function() {
     it('isPrimeSet should give true if the set is unit else gives false', function() {
       var set = new Set(2,3,5);
       var set1 = new Set(2,3,5,32416187567);
+      var set2 = new Set(2,3,4);
       expect(set.isPrimeSet()).to.be.true;
       expect(set1.isPrimeSet()).to.be.true;
+      expect(set2.isPrimeSet()).to.be.false;
     });
     it('isIntegerSet should tell all the elements in the set are integer or not', function() {
       var set = new Set(2,3,5);
       var set1 = new Set(2,3,5,32416187567);
       var set2 = new Set(2,3,5,32416187567.0);
+      var set3 = new Set(2,3,-5,32416187567.0);
+      var set4 = new Set(2,3.8,-5,32416187567.0);
       expect(set.isIntegerSet()).to.be.true;
       expect(set1.isIntegerSet()).to.be.true;
       expect(set2.isIntegerSet()).to.be.true;
+      expect(set3.isIntegerSet()).to.be.true;
+      expect(set4.isIntegerSet()).to.be.false;
+      expect(new Set().isIntegerSet()).to.be.true;
     });
   });
 
