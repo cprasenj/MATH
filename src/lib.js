@@ -49,12 +49,27 @@ var predessor = function(number) {
 
 var isPrime = function(number) {
   var limit = _.flowRight(add1, Math.sqrt)(number);
-  if(_.lte(number, 3)) return true;
-  return _.range(2, limit).every((aValueInRange) => remainder(number, aValueInRange));
+  return or(_.lte(number, 3), _.every(_.range(2, limit), _.partial(remainder, number)));
 }
 
 var isInteger = function(number) {
-  return number == parseInt(number, 10);
+  return _.eq(number, parseInt(number, 10));
+}
+
+var sortedJoin = function(list) {
+  return list.sort().join('');
+}
+
+var evalNestedValue = function(object, keys) {
+    return keys.reduce(function(nextObject, key) {
+      return !nextObject ? nextObject : nextObject[key];
+    }, object) || [];
+}
+
+var subSet = function(oneStateSet, aNotherStateSet) {
+  return (aNotherStateSet.length > 0) && aNotherStateSet.every(function(state) {
+    return _.includes(oneStateSet, state);
+  });
 }
 
 exports.lib = {
@@ -65,5 +80,8 @@ exports.lib = {
   'isPrime'         : isPrime,
   'isInteger'       : isInteger,
   'gt0'             : gt0,
-  'lt0'             : lt0
+  'lt0'             : lt0,
+  'sortedJoin'      : sortedJoin,
+  'evalNestedValue' : evalNestedValue,
+  'subSet'          : subSet
 };
