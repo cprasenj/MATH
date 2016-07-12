@@ -97,26 +97,54 @@ describe("SET", function() {
       expect(new Set().isIntegerSet()).to.be.true;
     });
     it('isPositiveSet tells if all the elements in the set are positive or not', function() {
-      var set = new Set(2,3,5);
-      var set1 = new Set(-2,3,5,32416187567);
+      var set = new Set(2, 3, 5);
+      var set1 = new Set(-2, 3, 5, 32416187567);
       expect(set.isPositiveSet()).to.be.true;
       expect(set1.isPositiveSet()).to.be.false;
     });
     it('isNegativeSet tells if all the elements in the set are positive or not', function() {
-      var set = new Set(-2,-3,-5);
-      var set1 = new Set(2,3,5,32416187567);
+      var set = new Set(-2, -3 ,-5);
+      var set1 = new Set(2, 3, 5, 32416187567);
       expect(set.isNegativeSet()).to.be.true;
       expect(set1.isNegativeSet()).to.be.false;
     });
     it('union should give the union of two sets', function() {
-      var set = new Set(1,2);
-      var set1 = new Set(2,3);
-      var set2 = new Set(1,2,3);
-      var set3 = new Set(1,2,2,3);
+      var set = new Set(1, 2);
+      var set1 = new Set(2, 3);
+      var set2 = new Set(1, 2, 3);
+      var set3 = new Set(1, 2, 2, 3);
       expect((set.union(set2)).equals(set2)).to.be.true;
       expect((set.union(set2)).equals(set3)).to.be.true;
     });
-
+    it('intersection should give the intersection of two sets', function() {
+      var set = new Set(1, 2);
+      var set1 = new Set(2, 3);
+      var set2 = new Set(2);
+      var set3 = new Set(1, 2, 3);
+      var set4 = new Set();
+      expect((set.intersection(set1)).equals(set2)).to.be.true;
+      expect((set.intersection(set1)).equals(set3)).to.be.false;
+      expect((set.intersection(set4)).equals(new Set())).to.be.true;
+    });
+    it('subtract should give the subtract of two sets', function() {
+      var set = new Set(1, 2);
+      var set1 = new Set(2, 3);
+      var set2 = new Set(1);
+      var set3 = new Set(3);
+      expect((set.subtract(set1)).equals(set2)).to.be.true;
+      expect((set.subtract(set1)).equals(set1.subtract(set))).to.be.false;
+      expect((set1.subtract(set)).equals(set3)).to.be.true;
+    });
+    it('cartesianProduct should give the cartesianProduct of two sets', function() {
+      var set = new Set(1, 2);
+      var set1 = new Set(2, 3);
+      var set3 = new Set();
+      var set4 = new Set(4, 5);
+      var productSet = new Set([[1, 2], [1, 3], [2, 2], [2, 3]]);
+      expect((set.cartesianProduct(set1)).equals(productSet)).to.be.true;
+      expect((set.cartesianProduct(set3)).equals(new Set())).to.be.true;
+      expect((set.cartesianProduct(set3.union(set4))).equals((set.cartesianProduct(set3)).union(set.cartesianProduct(set4)))).to.be.true;
+    });
   });
 
 });

@@ -16,9 +16,9 @@ Set.prototype = {
   },
 
   'isSubset' : function(that) {
-    var thisElements = this.elements();
-    var thatElements = that.elements();
-    return thisElements.every((aValue) => _.includes(thatElements, aValue));
+    return this.elements().every((thisElement) => {
+      return _.some(that.elements(), _.partial(_.isEqual, thisElement));
+    })
   },
 
   'isProperSubset' : function(that) {
@@ -47,15 +47,15 @@ Set.prototype = {
   },
 
   'isPrimeSet' : function() {
-    return this.elements().every((anElement) => lib.isPrime(anElement));
+    return _.every(this.elements(), lib.isPrime);
   },
 
   'isIntegerSet' : function() {
-    return this.elements().every((anElement) => lib.isInteger(anElement));
+    return _.every(this.elements(), lib.isInteger);
   },
 
   'isNaturalSet' : function() {
-    return this.elements().every((anElement) => _.flowRight(lib.gt0, lib.isInteger)(anElement));
+    return _.every(this.elements(), _.flowRight(lib.gt0, lib.isInteger));
   },
 
   'isPositiveSet' : function() {
@@ -68,5 +68,25 @@ Set.prototype = {
 
   'union' : function(that) {
     return new Set(_.union(this.elements(), that.elements()));
+  },
+
+  'intersection' : function(that) {
+    return new Set(_.intersection(this.elements(), that.elements()));
+  },
+
+  'subtract' : function(that) {
+    var subtrcted = this.elements();
+    that.elements().forEach((element) => {
+      subtrcted = _.without(subtrcted, element);
+    });
+    return new Set(subtrcted);
+  },
+
+  'cartesianProduct' : function(that) {
+    var allProducts = this.elements().map((element1) =>
+                            that.elements().map((element2) =>
+                                [element1, element2])
+                              );
+    return new Set(_.flatten(allProducts));
   }
 }
