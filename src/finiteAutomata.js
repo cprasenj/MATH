@@ -1,51 +1,40 @@
-var util = require('./lib.js').lib;
+var lib = require('./lib.js').lib;
 var _ = require("lodash");
 
-var dfa_transit = function(delta) {
-  return function(lastState, symbol) {
-    return delta[lastState][symbol];
-  }
+var dfa_transit = (delta) =>
+  (lastState, symbol) => lib.evalNestedValue(delta, [lastState, symbol]);
+
+var dfaGenerator = (tuple) => (inputString) => {
+  var dfa_reducer = _.partialRight(_.reduce, dfa_transit(tuple["delta"]), tuple["start-state"]);
+  var isFinalState = _.partial(_.includes, tuple["final-states"]);
+  return _.flowRight(isFinalState, dfa_reducer, lib.splitInput)(inputString);
 }
 
-var dfaGenerator = function(tuple) {
-    return function(inputString) {
-      var lastState = inputString.split("").reduce(
-        dfa_transit(tuple["delta"]), tuple["start-state"]
-      );
-      return _.includes(tuple["final-states"], lastState);
-    }
+var epsilonResolver = (delta, nextStates) => {
+  var nextEpsilons = _.flatten(nextStates.map((state) =>
+    lib.evalNestedValue(delta, [state, 'e'])
+  ));
+  return lib.or(lib.subSet(nextStates, nextEpsilons), lib.not(nextEpsilons.length)) ?
+  nextStates : epsilonResolver(delta, _.union(nextEpsilons, nextStates));
 }
 
-var epsilonResolver = function(delta, nextStates) {
-    var nextEpsilons = _.flatten(nextStates.map(function(state) {
-      return util.evalNestedValue(delta, [state, 'e']);
-    }));
-    return (util.subSet(nextStates, nextEpsilons) || !nextEpsilons.length) ? nextStates :
-    epsilonResolver(delta, _.union(nextEpsilons, nextStates));
+var nfa_transit = (delta) => (lastStates, symbol) => {
+  var returnStates = _.flatten(lastStates.map((aState) =>
+    lib.evalNestedValue(delta, [aState, symbol])
+  ));
+  return _.flowRight(_.flatten, _.partial(_.union, returnStates), epsilonResolver)(delta, returnStates);
 }
 
-var nfa_transit = function(delta) {
-  return function(lastStates, symbol) {
-    var returnStates = _.flatten(lastStates.map(function(aState) {
-      return util.evalNestedValue(delta, [aState, symbol]);
-    }));
-    return _.flatten(_.union(epsilonResolver(delta, returnStates), returnStates));
-  }
+var nfaGenerator = (tuple) => (inputString) => {
+  var delta = tuple["delta"];
+  var lastStates = lib.splitInput(inputString).reduce(
+    nfa_transit(delta), epsilonResolver(delta, [tuple["start-state"]])
+  );
+  return _.flowRight(lib.not, _.isEmpty, _.intersection)(tuple["final-states"], lastStates);
 }
 
-var nfaGenerator = function(tuple) {
-  return function(inputString) {
-    var delta = tuple["delta"];
-    var lastStates = inputString.split("").reduce(
-      nfa_transit(delta), epsilonResolver(delta, [tuple["start-state"]])
-    );
-    return !_.isEmpty(_.intersection(tuple["final-states"], lastStates));
-  }
-}
-
-exports.finiteAutomata = function(type, tuple){
-    return (type == "dfa") ? dfaGenerator(tuple) : nfaGenerator(tuple);
-}
+exports.finiteAutomata = (type, tuple) =>
+    (type == "dfa") ? dfaGenerator(tuple) : nfaGenerator(tuple);
 
 exports.FA = {
   "dfaGenerator": dfaGenerator,

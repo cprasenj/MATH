@@ -16,9 +16,9 @@ Set.prototype = {
   },
 
   'isSubset' : function(that) {
-    return this.elements().every((thisElement) => {
-      return _.some(that.elements(), _.partial(_.isEqual, thisElement));
-    })
+    return this.elements().every((thisElement) =>
+      _.some(that.elements(), _.partial(_.isEqual, thisElement))
+    )
   },
 
   'isProperSubset' : function(that) {
