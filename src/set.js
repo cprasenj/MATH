@@ -27,7 +27,7 @@ Set.prototype = {
 
   'powerSet' : function() {
     var combinations = lib.allCombinations(this.elements());
-    return combinations.map((aCombination) => new Set(aCombination));
+    return new Set(combinations.map((aCombination) => new Set(aCombination)));
   },
 
   'cardinality' : function() {
@@ -63,7 +63,7 @@ Set.prototype = {
   },
 
   'isNegativeSet' : function() {
-    return _.every(this.elements(), lib.lt0);
+    return lib.not(this.isPositiveSet());
   },
 
   'union' : function(that) {

@@ -65,5 +65,6 @@ exports.lib = {
   'sortedJoin'      : sortedJoin,
   'evalNestedValue' : evalNestedValue,
   'subSet'          : subSet,
-  'splitInput'      : splitInput
+  'splitInput'      : splitInput,
+  'remainder'       : remainder
 };

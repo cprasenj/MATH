@@ -5,146 +5,258 @@ require('../src/set.js');
 
 describe("SET", function() {
 
-  describe("Set()", function() {
-    it('set should add an element into it', function() {
+  describe('add', function() {
+    it('adds an element into the set', function() {
       var set = new Set();
       set.add(1);
       expect(set.elements()).to.include.members([1]);
     });
-    it('set should add an element into it', function() {
+    it('dose not add if the element is already present in the set', function() {
       var set = new Set();
       set.add(1);
       expect(set.elements()).to.include.members([1]);
       set.add(1);
       expect(set.elements()).to.have.length(1);
     });
-    it('set1 should be a subset of set2 if and only if all the elements of set1 is present in set2', function() {
+  });
+
+  describe('isSubset', function() {
+    it('gives true for {1} and {1, 2}', function() {
       var set1 = new Set(1);
       var set2 = new Set(1,2);
-      var set3 = new Set();
       expect(set1.isSubset(set2)).to.be.true;
-      expect(set3.isSubset(set2)).to.be.true;
-      expect(set3.isSubset(set1)).to.be.true;
     });
-    it('set should tell if it is equal to another set', function() {
+    it('gives true for empty set and any set', function() {
+      var emptySet = new Set();
       var set1 = new Set(1);
       var set2 = new Set(1,2);
-      var set3 = new Set(1);
-      expect(set1.equals(set3)).to.be.true;
-      expect(set3.equals(set1)).to.be.true;
+      expect(emptySet.isSubset(set1)).to.be.true;
+      expect(emptySet.isSubset(set2)).to.be.true;
+    });
+  });
+  describe('equals', function() {
+    it('gives true for {1} and {1}', function() {
+      var set1 = new Set(1);
+      var set2 = new Set(1);
+      expect(set1.equals(set2)).to.be.true;
+      expect(set2.equals(set1)).to.be.true;
+    });
+    it('gives false  for {1} and {1, 2}', function() {
+      var set1 = new Set(1);
+      var set2 = new Set(1,2);
       expect(set2.equals(set1)).to.be.false;
       expect(set1.equals(set2)).to.be.false;
     });
-    it('set1 is proper subset of set2 if set1 is a subset of set2 and they are not equal', function() {
+  });
+
+  describe('isProperSubset', function() {
+    it('gives false for {1} and {1}', function() {
+      var set1 = new Set(1);
+      var set2 = new Set(1);
+      expect(set1.isProperSubset(set2)).to.be.false;
+      expect(set2.isProperSubset(set1)).to.be.false;
+    });
+    it('gives true for {1} and {1, 2}', function() {
       var set1 = new Set(1);
       var set2 = new Set(1,2);
-      var set3 = new Set(1);
       expect(set1.isProperSubset(set2)).to.be.true;
-      expect(set1.isProperSubset(set3)).to.be.false;
     });
-    it('powerSet of set1 gives a set which contains all the set of combinations of set1', function() {
+  });
+
+  describe('powerSet', function() {
+    it('gives {{}, {1}, {1, 2}} for {1, 2}', function() {
       var set1 = new Set(1,2);
       var actual = set1.powerSet();
       var expected = new Set(new Set(), new Set(1), new Set(1, 2));
       expected.elements().forEach((anExpected) => {
-        var isSetPresent = actual.some((anActual) => {
+        var isSetPresent = actual.elements().some((anActual) => {
           return anExpected.equals(anActual);
         });
         expect(isSetPresent).to.be.true;
-      })
+      });
     });
-    it('should give the cardinality of a set', function() {
+    it('gives {} for {}', function() {
+      var set = new Set();
+      expect(set.powerSet().equals(new Set())).to.be.true;
+    });
+  });
+
+  describe('cardinality', function() {
+    it('gives 4 for {1, 2, 3, 1, 2, 3}', function() {
+      var set = new Set(1, 2, 3, 1, 2, 3);
+      assert.equal(set.cardinality(), 3);
+    });
+    it('gives 1 for {1}', function() {
       var set1 = new Set(1);
-      var set3 = new Set(1, 2, 3);
-      var set0 = new Set();
-      var set4 = new Set(1, 2, 3, 1, 2, 3);
       assert.equal(set1.cardinality(), 1);
+    });
+    it('gives 3 for {1, 2, 3}', function() {
+      var set3 = new Set(1, 2, 3);
       assert.equal(set3.cardinality(), 3);
-      assert.equal(set4.cardinality(), 3);
+    });
+    it('gives 0 for {}', function() {
+      var set0 = new Set();
       assert.equal(set0.cardinality(), 0);
     });
-    it('should give true if the set is empty else gives false', function() {
+  });
+
+  describe('isEmpty', function() {
+    it('gives true if the set is empty', function() {
       var set0 = new Set();
-      var set1 = new Set(1);
       expect(set0.isEmpty()).to.be.true;
-      expect(set1.isEmpty()).to.be.false;
     });
-    it('should give true if the set is unit else gives false', function() {
-      var set0 = new Set();
+    it('gives false if the set is not empty', function() {
       var set1 = new Set(1);
-      expect(set0.isUnit()).to.be.false;
+      var set2 = new Set(new Set());
+      expect(set1.isEmpty()).to.be.false;
+      expect(set2.isEmpty()).to.be.false;
+    });
+  });
+
+  describe('isUnit', function() {
+    it('gives true for {}', function() {
+      var set1 = new Set(1);
       expect(set1.isUnit()).to.be.true;
     });
-    it('isPrimeSet should give true if the set is unit else gives false', function() {
-      var set = new Set(2,3,5);
-      var set1 = new Set(2,3,5,32416187567);
-      var set2 = new Set(2,3,4);
-      expect(set.isPrimeSet()).to.be.true;
-      expect(set1.isPrimeSet()).to.be.true;
-      expect(set2.isPrimeSet()).to.be.false;
+    it('gives false for {}, and {1, 2}', function() {
+      var set0 = new Set();
+      var set1 = new Set(1, 2);
+      expect(set0.isUnit()).to.be.false;
+      expect(set1.isUnit()).to.be.false;
     });
-    it('isIntegerSet should tell all the elements in the set are integer or not', function() {
-      var set = new Set(2,3,5);
-      var set1 = new Set(2,3,5,32416187567);
-      var set2 = new Set(2,3,5,32416187567.0);
-      var set3 = new Set(2,3,-5,32416187567.0);
-      var set4 = new Set(2,3.8,-5,32416187567.0);
+  });
+
+  describe('isPrimeSet', function() {
+    it('gives true for {2, 3, 5}', function() {
+      var set = new Set(2, 3, 5);
+      expect(set.isPrimeSet()).to.be.true;
+    });
+    it('gives true for {2, 3, 5, 32416187567}', function() {
+      var set = new Set(2,3,5,32416187567);
+      expect(set.isPrimeSet()).to.be.true;
+    });
+    it('gives false for {2, 3, 4}', function() {
+      var set = new Set(2, 3, 4);
+      expect(set.isPrimeSet()).to.be.false;
+    });
+  });
+
+  describe('isIntegerSet', function() {
+    it('gives true for {2, 3, 5}', function() {
+      var set = new Set(2, 3, 5);
       expect(set.isIntegerSet()).to.be.true;
-      expect(set1.isIntegerSet()).to.be.true;
-      expect(set2.isIntegerSet()).to.be.true;
-      expect(set3.isIntegerSet()).to.be.true;
-      expect(set4.isIntegerSet()).to.be.false;
+    });
+    it('gives true for {2, 3, 5, 32416187567}', function() {
+      var set = new Set(2,3,5,32416187567);
+      expect(set.isIntegerSet()).to.be.true;
+    });
+    it('gives true for {2, 3, 5, 32416187567.0}', function() {
+      var set = new Set(2, 3, 5, 32416187567.0);
+      expect(set.isIntegerSet()).to.be.true;
+    });
+    it('gives true for {2, 3, -5, 32416187567.0}', function() {
+      var set = new Set(2, 3, -5, 32416187567.0);
+      expect(set.isIntegerSet()).to.be.true;
+    });
+    it('gives false for {2, 3.8, -5, 32416187567.0}', function() {
+      var set = new Set(2, 3.8, -5, 32416187567.0);
+      expect(set.isIntegerSet()).to.be.false;
+    });
+    it('gives true for {}', function() {
       expect(new Set().isIntegerSet()).to.be.true;
     });
-    it('isPositiveSet tells if all the elements in the set are positive or not', function() {
+  });
+
+  describe('isPositiveSet', function() {
+    it('gives true for {2, 3, 5}', function() {
       var set = new Set(2, 3, 5);
-      var set1 = new Set(-2, 3, 5, 32416187567);
       expect(set.isPositiveSet()).to.be.true;
-      expect(set1.isPositiveSet()).to.be.false;
     });
-    it('isNegativeSet tells if all the elements in the set are positive or not', function() {
+    it('gives false for {-2, 3, 5, 32416187567}', function() {
+      var set = new Set(-2, 3, 5, 32416187567);
+      expect(set.isPositiveSet()).to.be.false;
+    });
+  });
+
+  describe('isNegativeSet', function() {
+    it('gives true for {-2, -3 ,-5}', function() {
       var set = new Set(-2, -3 ,-5);
-      var set1 = new Set(2, 3, 5, 32416187567);
       expect(set.isNegativeSet()).to.be.true;
-      expect(set1.isNegativeSet()).to.be.false;
     });
-    it('union should give the union of two sets', function() {
+    it('gives false for {2, 3, 5, 32416187567}', function() {
+      var set = new Set(2, 3, 5, 32416187567);
+      expect(set.isNegativeSet()).to.be.false;
+    });
+  });
+
+  describe('union', function() {
+    it('gives {1, 2, 3} for {1, 2}, {2, 3}', function() {
       var set = new Set(1, 2);
       var set1 = new Set(2, 3);
       var set2 = new Set(1, 2, 3);
-      var set3 = new Set(1, 2, 2, 3);
-      expect((set.union(set2)).equals(set2)).to.be.true;
-      expect((set.union(set2)).equals(set3)).to.be.true;
+      expect((set.union(set1)).equals(set2)).to.be.true;
     });
-    it('intersection should give the intersection of two sets', function() {
+    it('gives {1, 2, 3} for {1, 2}, {1, 2, 3}', function() {
+      var set = new Set(1, 2);
+      var set1 = new Set(1, 2, 3);
+      expect((set.union(set1)).equals(set1)).to.be.true;
+    });
+  });
+
+  describe('intersection', function() {
+    it('gives {2} for {1, 2} and {2, 3}', function() {
       var set = new Set(1, 2);
       var set1 = new Set(2, 3);
       var set2 = new Set(2);
-      var set3 = new Set(1, 2, 3);
-      var set4 = new Set();
       expect((set.intersection(set1)).equals(set2)).to.be.true;
-      expect((set.intersection(set1)).equals(set3)).to.be.false;
-      expect((set.intersection(set4)).equals(new Set())).to.be.true;
     });
-    it('subtract should give the subtract of two sets', function() {
+    it('gives {} for {1, 2} and {}', function() {
+      var set = new Set(1, 2);
+      var set1 = new Set();
+      expect((set.intersection(set1)).equals(new Set())).to.be.true;
+    });
+  });
+
+  describe('subtract', function() {
+    it('gives {1} for {1, 2} and {2, 3}', function() {
       var set = new Set(1, 2);
       var set1 = new Set(2, 3);
       var set2 = new Set(1);
-      var set3 = new Set(3);
       expect((set.subtract(set1)).equals(set2)).to.be.true;
-      expect((set.subtract(set1)).equals(set1.subtract(set))).to.be.false;
-      expect((set1.subtract(set)).equals(set3)).to.be.true;
     });
-    it('cartesianProduct should give the cartesianProduct of two sets', function() {
+    it('subtract of set2 from set1 and set1 from set2 are not same', function() {
+      var set1 = new Set(1, 2);
+      var set2 = new Set(2, 3);
+      expect((set1.subtract(set2)).equals(set2.subtract(set1))).to.be.false;
+    });
+    it('gives {3} for {2, 3} and {1, 2}', function() {
+      var set1 = new Set(1, 2);
+      var set2 = new Set(2, 3);
+      var set3 = new Set(3);
+      expect((set2.subtract(set1)).equals(set3)).to.be.true;
+    });
+  });
+
+  describe('cartesianProduct', function() {
+    it('gives [[1, 2], [1, 3], [2, 2], [2, 3]] for {1, 2} and {2, 3}', function() {
+      var set1 = new Set(1, 2);
+      var set2 = new Set(2, 3);
+      var productSet = new Set([[1, 2], [1, 3], [2, 2], [2, 3]]);
+      expect((set1.cartesianProduct(set2)).equals(productSet)).to.be.true;
+    });
+    it('gives {} for any set and {}', function() {
+      var set1 = new Set(1, 2);
+      var set2 = new Set(2, 3);
+      var set3 = new Set();
+      expect((set1.cartesianProduct(set3)).equals(new Set())).to.be.true;
+      expect((set2.cartesianProduct(set3)).equals(new Set())).to.be.true;
+    });
+    it('A × (B ∪ C) = (A × B) ∪ (A × C)', function() {
       var set = new Set(1, 2);
       var set1 = new Set(2, 3);
       var set3 = new Set();
       var set4 = new Set(4, 5);
-      var productSet = new Set([[1, 2], [1, 3], [2, 2], [2, 3]]);
-      expect((set.cartesianProduct(set1)).equals(productSet)).to.be.true;
-      expect((set.cartesianProduct(set3)).equals(new Set())).to.be.true;
       expect((set.cartesianProduct(set3.union(set4))).equals((set.cartesianProduct(set3)).union(set.cartesianProduct(set4)))).to.be.true;
     });
   });
-
 });
