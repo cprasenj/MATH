@@ -1,7 +1,7 @@
-var FA = require('./finiteAutomata.js').FA;
-var lib = require('./lib.js').lib;
-var nfaToDfa = {};
-var _ = require("lodash");
+const FA = require('./finiteAutomata.js').FA;
+const lib = require('./lib.js').lib;
+const nfaToDfa = {};
+const _ = require("lodash");
 
 nfaToDfa.findStateCombinations = (allStates) => lib.allCombinations(allStates);
 
@@ -12,21 +12,21 @@ nfaToDfa.identifyFinalStates = (combinations, nfaFinalStates) =>
     _.some(nfaFinalStates, _.partial(_.includes, aCombination))
   );
 
-var findDfaTransitions = (delta, alphabet) => (state) => {
-  var nextStates = lib.evalNestedValue(delta, [state, alphabet]);
+const findDfaTransitions = (delta, alphabet) => (state) => {
+  const nextStates = lib.evalNestedValue(delta, [state, alphabet]);
   return _.union(FA.epsilonResolver(delta, nextStates) ,nextStates);
 }
 
-var nextStateForAnAlphabet = (combination, delta, alphabet) =>
+const nextStateForAnAlphabet = (combination, delta, alphabet) =>
   lib.sortedJoin(combination
     .map(findDfaTransitions(delta, alphabet))
-    .reduce((bucket, states) =>_.union(bucket, states), []));
+    .reduce((bucket, states) => _.union(bucket, states), []));
 
 nfaToDfa.findEquvalantDfaTransitions = (delta, combinatins, alphabets) => {
   var dfaDelta = {};
   alphabets.forEach(function(alphabet) {
     combinatins.forEach((combination) => {
-      var key = lib.sortedJoin(combination);
+      const key = lib.sortedJoin(combination);
       dfaDelta[key] || (dfaDelta[key] = {});
       dfaDelta[key][alphabet] = nextStateForAnAlphabet(combination, delta, alphabet);
     });
@@ -36,19 +36,17 @@ nfaToDfa.findEquvalantDfaTransitions = (delta, combinatins, alphabets) => {
 
 nfaToDfa.converter = (nfa) => {
   var dfa = {};
-  var alphabets = nfa['alphabets'];
-  var nfaDelta = nfa['delta'];
-  var combinations = nfaToDfa.findStateCombinations(nfa['states']);
-  dfa['states'] = combinations.map(function(combination) {
-    return lib.sortedJoin(combination);
-  });
+  const alphabets = nfa['alphabets'];
+  const nfaDelta = nfa['delta'];
+  const combinations = nfaToDfa.findStateCombinations(nfa['states']);
+  dfa['states'] = combinations.map(combination => lib.sortedJoin(combination));
   dfa['alphabets'] = alphabets;
   dfa['delta'] = nfaToDfa.findEquvalantDfaTransitions(nfaDelta, combinations, alphabets);
   dfa['start-state'] = lib.sortedJoin(nfaToDfa.findStartState(nfaDelta, nfa['start-state']));
   dfa['final-states'] =
-    nfaToDfa.identifyFinalStates(combinations, nfa['final-states']).map(function(combination) {
-    return lib.sortedJoin(combination);
-  });
+    nfaToDfa.identifyFinalStates(combinations, nfa['final-states']).map(combination =>
+      lib.sortedJoin(combination)
+    );
   return dfa;
 }
 

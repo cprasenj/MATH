@@ -1,16 +1,15 @@
-var lib = {};
-var _ = require('lodash');
+const _ = require('lodash');
 
-var and = (first, second) => first && second;
+const and = (first, second) => first && second;
 
-var or = (first, second) => first || second;
+const or = (first, second) => first || second;
 
-var not = (val) => !val;
+const not = (val) => !val;
 
-var remainder = (one, another) => one % another;
+const remainder = (one, another) => one % another;
 
-var allCombinations = (list) => {
-    var combinator = function(active, rest, bucket) {
+const allCombinations = (list) => {
+    const combinator = function(active, rest, bucket) {
         if (and(not(active.length), not(rest.length)))
             return [];
         if (not(rest.length)) {
@@ -24,34 +23,32 @@ var allCombinations = (list) => {
     return combinator("", list, []);
 }
 
-var add1 = _.partial(_.add, 1);
-var sub1 = _.partialRight(_.subtract, 1);
+const add1 = _.partial(_.add, 1);
+const sub1 = _.partialRight(_.subtract, 1);
 
-var successor = (number) => add1(number);
-
-var predessor = (number) => sub1(number);
-
-var isPrime = (number) =>
+const isPrime = (number) =>
   or(_.lte(number, 3), _.every(_.range(2, _.flowRight(add1, Math.sqrt)(number))
   , _.partial(remainder, number)
   )
 );
 
-var isInteger = (number) => _.eq(number, parseInt(number, 10));
+const isInteger = (number) => _.eq(number, parseInt(number, 10));
 
-var sortedJoin = (list) => list.sort().join('');
+const sortedJoin = (list) => list.sort().join('');
 
-var evalNestedValue = (object, keys) => or(keys.reduce((nextObject, key) =>
+const evalNestedValue = (object, keys) => or(keys.reduce((nextObject, key) =>
   not(nextObject) ? nextObject : nextObject[key]
 , object), []);
 
-var subSet = (oneStateSet, aNotherStateSet) =>
+const subSet = (oneStateSet, aNotherStateSet) =>
   and(
     _.gt(aNotherStateSet.length, 0),
     _.every(aNotherStateSet, _.partial(_.includes, oneStateSet))
   );
 
-var splitInput = _.partialRight(_.split, "");
+const splitInput = _.partialRight(_.split, "");
+
+const negate = _.partial(_.multiply, -1);
 
 exports.lib = {
   'and'             : and,
@@ -66,5 +63,6 @@ exports.lib = {
   'evalNestedValue' : evalNestedValue,
   'subSet'          : subSet,
   'splitInput'      : splitInput,
-  'remainder'       : remainder
+  'remainder'       : remainder,
+  'negate'          : negate
 };
