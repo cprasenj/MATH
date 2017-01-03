@@ -3,3 +3,4 @@ node: 6.0.0
 script: 
   - npm update && npm install
   - mocha test
+  - mocha test
