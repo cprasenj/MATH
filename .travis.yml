@@ -1,5 +1,5 @@
 language: node_js
-node: 5.10.0
+node_js: 6
 
 script: 
   - npm update && npm install
